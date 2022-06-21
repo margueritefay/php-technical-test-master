@@ -14,8 +14,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ApiResource(
- *     collectionOperations={"get"={"method"="GET"}},
- *     itemOperations={"get",
+ *     collectionOperations={
+ *                          "get"={"method"="GET"},
+ *                          "post",
+ *     },
+ *     itemOperations={
+ *                      "get",
  *                     "patch" = {"security"="is_granted('ROLE_ADMIN')"},
  *                    },
  * )
@@ -57,7 +61,7 @@ class Produit
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable = true)
      */
     private $image;
 

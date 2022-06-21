@@ -16,13 +16,7 @@ class PromoService
     )   {
         $this->em = $em;
     }
-    public function newPanier(Produit $produit)
-    {
-        $panier = new Panier();
-        $panier->addProduit($produit);
 
-        return $panier;
-    }
 
     public function valorisationPanier(Panier $panier){
         //faire une méthode pour récupérer tous les produits d'un panier

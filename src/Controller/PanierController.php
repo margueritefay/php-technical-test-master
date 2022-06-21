@@ -17,10 +17,10 @@ class PanierController extends AbstractController
      */
     public function createPanier(Produit $produit, PanierService $panierSerice, ProduitService $produitService): Response
     {
-        //creation d'un panier et ajout d'un produit dans un panier
+        //creation d'un panier et ajout du produit dans le panier
         $panier = $panierSerice->newPanier($produit);
 
-        // valorisation du panier
+        // valorisation du panier (ou mise à jour)
         $panierSerice->valorisationPanier($panier);
 
         //validation du panier

@@ -23,7 +23,9 @@ class PanierService
     {
         $panier = new Panier();
         $panier->addProduit($produit);
-
+        $panier->setQuantite();
+        $this->em->persist($panier);
+        $this->em->flush();
         return $panier;
     }
 

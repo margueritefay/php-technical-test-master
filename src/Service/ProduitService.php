@@ -9,22 +9,19 @@ use Doctrine\ORM\EntityManagerInterface;
 class ProduitService
 {
 
-    private $produitRepository;
     private $em;
 
     public function __construct(
-        ProduitRepository $produitRepository,
         EntityManagerInterface $em
     )   {
-        $this->produitRepository = $produitRepository;
         $this->em = $em;
     }
     public function stockProduit(Produit $produit)
     {
-        $panier = new Panier();
-        $panier->addProduit($produit);
-
-        return $panier;
+        //on considert l'achat d'un produit par un produit
+        $produit->setStock($produit->getStock() - 1);
+        $this->em->persist($produit);
+        $this->em->flush();
     }
 
 }
