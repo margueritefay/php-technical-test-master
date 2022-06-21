@@ -7,9 +7,26 @@ use App\Repository\PanierRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={},
+ *     itemOperations={
+ *          "get" = {
+ *              "security" = "object.getUser() == user ",
+ *              "security_message" = "Vous ne pouvez pas voir ce panier.",
+ *            },
+ *          "patch" = {
+ *              "denormalization_context" = {"groups"={"validationGroup"}},
+ *              "security" = "object.getUser() == user ",
+ *              "security_message" = "Vous ne pouvez pas modifier ce panier.",
+ *              "input_formats" = {
+ *                  "json" = {"application/json;charset=utf-8", "application/json;charset=UTF-8"},
+ *              },
+ *          },
+ *     },
+ * )
  *
  * @ORM\Entity(repositoryClass=PanierRepository::class)
  */
@@ -39,6 +56,7 @@ class Panier
     private $valorisation;
 
     /**
+     * @Groups({"validationGroup"})
      * @ORM\Column(type="boolean", options={"default" : false})
      */
     private $validated;

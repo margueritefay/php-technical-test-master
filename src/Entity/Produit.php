@@ -85,6 +85,11 @@ class Produit
      */
     private $panierProduits;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $type;
+
     public function __construct()
     {
         $this->panierProduits = new ArrayCollection();
@@ -193,6 +198,18 @@ class Produit
                 $panierProduit->setProduit(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
