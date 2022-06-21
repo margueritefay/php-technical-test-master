@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,7 +21,15 @@ use Doctrine\ORM\Mapping as ORM;
  *     },
  *     itemOperations={
  *                      "get",
- *                     "patch",
+ *                      "put" = {"security"="is_granted('ROLE_ADMIN')"},
+ *                      "patch" = {
+ *                            "denormalization_context" = {"groups"={"stockGroup"}},
+ *                            "security"="is_granted('ROLE_ADMIN')",
+ *                            "security_message" = "Vous ne pouvez pas modifier ce panier.",
+ *                            "input_formats" = {
+ *                            "json" = {"application/json;charset=utf-8", "application/json;charset=UTF-8"},
+ *                          },
+ *                       },
  *                    },
  * )
  *
@@ -71,6 +80,7 @@ class Produit
     private $prix;
 
     /**
+     * @Groups({"stockGroup"})
      * @ORM\Column(type="integer")
      */
     private $stock;
