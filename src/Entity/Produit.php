@@ -20,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
  *     },
  *     itemOperations={
  *                      "get",
- *                     "patch" = {"security"="is_granted('ROLE_ADMIN')"},
+ *                     "patch",
  *                    },
  * )
  *
@@ -81,13 +81,13 @@ class Produit
     private $actif;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Panier::class, mappedBy="Produit")
+     * @ORM\OneToMany(targetEntity=PanierProduit::class, mappedBy="produit", orphanRemoval=true)
      */
-    private $paniers;
+    private $panierProduits;
 
     public function __construct()
     {
-        $this->paniers = new ArrayCollection();
+        $this->panierProduits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,27 +168,30 @@ class Produit
     }
 
     /**
-     * @return Collection<int, Panier>
+     * @return Collection<int, PanierProduit>
      */
-    public function getPaniers(): Collection
+    public function getPanierProduits(): Collection
     {
-        return $this->paniers;
+        return $this->panierProduits;
     }
 
-    public function addPanier(Panier $panier): self
+    public function addPanierProduit(PanierProduit $panierProduit): self
     {
-        if (!$this->paniers->contains($panier)) {
-            $this->paniers[] = $panier;
-            $panier->addProduit($this);
+        if (!$this->panierProduits->contains($panierProduit)) {
+            $this->panierProduits[] = $panierProduit;
+            $panierProduit->setProduit($this);
         }
 
         return $this;
     }
 
-    public function removePanier(Panier $panier): self
+    public function removePanierProduit(PanierProduit $panierProduit): self
     {
-        if ($this->paniers->removeElement($panier)) {
-            $panier->removeProduit($this);
+        if ($this->panierProduits->removeElement($panierProduit)) {
+            // set the owning side to null (unless already changed)
+            if ($panierProduit->getProduit() === $this) {
+                $panierProduit->setProduit(null);
+            }
         }
 
         return $this;

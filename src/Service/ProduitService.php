@@ -2,6 +2,7 @@
 namespace App\Service;
 
 use App\Entity\Panier;
+use App\Entity\PanierProduit;
 use App\Entity\Produit;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,11 +17,14 @@ class ProduitService
     )   {
         $this->em = $em;
     }
-    public function stockProduit(Produit $produit)
+    public function stockProduit(Panier $panier)
     {
-        //on considert l'achat d'un produit par un produit
-        $produit->setStock($produit->getStock() - 1);
-        $this->em->persist($produit);
+        /** @var PanierProduit $panierProduit */
+        foreach ($panier->getProduits() as $panierProduit) {
+           $produit = $panierProduit->getProduit();
+           $produit->setStock($produit->getStock() - $panierProduit->getQuantity());
+            $this->em->persist($produit);
+        }
         $this->em->flush();
     }
 

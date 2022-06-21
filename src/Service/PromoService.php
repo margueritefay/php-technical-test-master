@@ -18,7 +18,7 @@ class PromoService
     }
 
 
-    public function valorisationPanier(Panier $panier){
+    public function applyPromotion(Panier $panier){
         //faire une méthode pour récupérer tous les produits d'un panier
 
         //prendre en compte les promos

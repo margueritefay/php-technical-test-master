@@ -2,6 +2,7 @@
 namespace App\Service;
 
 use App\Entity\Panier;
+use App\Entity\PanierProduit;
 use App\Entity\Produit;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,19 +20,21 @@ class PanierService
         $this->produitRepository = $produitRepository;
         $this->em = $em;
     }
-    public function newPanier(Produit $produit)
-    {
-        $panier = new Panier();
-        $panier->addProduit($produit);
-        $panier->setQuantite();
-        $this->em->persist($panier);
-        $this->em->flush();
-        return $panier;
+
+    public function checkAvailableCart (Panier $panier) {
+        if($panier->isValidated()) {
+            throw new \Exception("Ce panier a déjà été validé");
+        }
     }
 
     public function valorisationPanier(Panier $panier){
-        //faire une méthode pour récupérer tous les produits d'un panier
-
-        return;
+        $valorisation = 0;
+        /** @var PanierProduit $panierProduit */
+        foreach ($panier->getProduits() as $panierProduit) {
+            $valorisation += $panierProduit->getQuantity() * $panierProduit->getProduit()->getPrix();
+        }
+        $panier->setValorisation($valorisation);
+        $this->em->persist($panier);
+        $this->em->flush();
     }
 }

@@ -7,10 +7,7 @@ use App\Repository\PromoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(
- *      collectionOperations={"get"={"method"="GET"}},
- *     itemOperations={}
- * )
+ * @ApiResource()
  *
  * @ORM\Entity(repositoryClass=PromoRepository::class)
  */

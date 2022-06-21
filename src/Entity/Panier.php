@@ -2,12 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PanierRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ApiResource()
+ *
  * @ORM\Entity(repositoryClass=PanierRepository::class)
  */
 class Panier
@@ -20,65 +23,39 @@ class Panier
     private $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Produit::class, inversedBy="paniers")
-     */
-    private $Produit;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $quantite;
-
-    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="paniers")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $user;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PanierProduit::class, mappedBy="panier", orphanRemoval=true)
+     */
+    private $produits;
+
+    /**
+     * @ORM\Column(type="integer", options={"default" : 0})
+     */
+    private $valorisation;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default" : false})
+     */
+    private $validated;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $codePromo;
+
     public function __construct()
     {
-        $this->Produit = new ArrayCollection();
+        $this->produits = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    /**
-     * @return Collection<int, Produit>
-     */
-    public function getProduit(): Collection
-    {
-        return $this->Produit;
-    }
-
-    public function addProduit(Produit $produit): self
-    {
-        if (!$this->Produit->contains($produit)) {
-            $this->Produit[] = $produit;
-        }
-
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): self
-    {
-        $this->Produit->removeElement($produit);
-
-        return $this;
-    }
-
-    public function getQuantite(): ?int
-    {
-        return $this->quantite;
-    }
-
-    public function setQuantite(int $quantite): self
-    {
-        $this->quantite = $quantite;
-
-        return $this;
     }
 
     public function getUser(): ?User
@@ -89,6 +66,72 @@ class Panier
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PanierProduit>
+     */
+    public function getProduits(): Collection
+    {
+        return $this->produits;
+    }
+
+    public function addProduit(PanierProduit $panierProduit): self
+    {
+        if (!$this->produits->contains($panierProduit)) {
+            $this->produits[] = $panierProduit;
+            $panierProduit->setPanier($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduit(PanierProduit $panierProduit): self
+    {
+        if ($this->produits->removeElement($panierProduit)) {
+            // set the owning side to null (unless already changed)
+            if ($panierProduit->getPanier() === $this) {
+                $panierProduit->setPanier(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getValorisation(): ?int
+    {
+        return $this->valorisation;
+    }
+
+    public function setValorisation(int $valorisation): self
+    {
+        $this->valorisation = $valorisation;
+
+        return $this;
+    }
+
+    public function isValidated(): ?bool
+    {
+        return $this->validated;
+    }
+
+    public function setValidated(bool $validated): self
+    {
+        $this->validated = $validated;
+
+        return $this;
+    }
+
+    public function getCodePromo(): ?string
+    {
+        return $this->codePromo;
+    }
+
+    public function setCodePromo(?string $codePromo): self
+    {
+        $this->codePromo = $codePromo;
 
         return $this;
     }
